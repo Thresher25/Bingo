@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-public class MainClass extends JPanel implements MouseListener, ActionListener{
+public class MainClass extends JPanel implements ActionListener{
 
     public final int SCREENWIDTH = 1024;
     public final int SCREENHEIGHT = 768;
@@ -77,13 +77,22 @@ public class MainClass extends JPanel implements MouseListener, ActionListener{
     }
 
     public boolean checkBingo(int[][] array){
-        boolean temp = true;
+        boolean temp = false;
         for(int i=0;i<bingoNums.length;i++){
-            for(int j=0;j<bingoNums.length;j++){
-               if(!calledNums.contains(array[i][j])){
-                   temp = false;
-               }
+            if(calledNums.contains(array[i][0]) && calledNums.contains(array[i][1]) && calledNums.contains(array[i][2]) && calledNums.contains(array[i][3]) && calledNums.contains(array[i][4])){
+                temp = true;
             }
+        }
+        for(int j=0;j<bingoNums.length;j++){
+            if(calledNums.contains(array[0][j]) && calledNums.contains(array[1][j]) && calledNums.contains(array[2][j]) && calledNums.contains(array[3][j]) &&calledNums.contains(array[4][j])){
+                temp = true;
+            }
+        }
+        if(calledNums.contains(array[0][0]) && calledNums.contains(array[1][1]) && calledNums.contains(array[2][2]) && calledNums.contains(array[3][3]) && calledNums.contains(array[4][4])){
+            temp = true;
+        }
+        if(calledNums.contains(array[0][4]) && calledNums.contains(array[1][3]) && calledNums.contains(array[2][2]) && calledNums.contains(array[3][1]) && calledNums.contains(array[4][0])){
+            temp = true;
         }
         return temp;
     }
@@ -112,47 +121,31 @@ public class MainClass extends JPanel implements MouseListener, ActionListener{
         g.drawString("O",580,145);
         for(int i=0;i<bingoNums.length;i++){
             for(int j=0;j<bingoNums.length;j++){
+                if(calledNums.contains(bingoNums[i][j])){
+                    g.setColor(Color.green);
+                }
                 g.drawString( new Integer(bingoNums[i][j]).toString(),100*i+180,100*j+220);
+                g.setColor(Color.WHITE);
             }
         }
-        if(won){
-            g.drawString("WON",700,700);
+        if(calledNums.size()>0) {
+            g.drawString("Rolled Number: " + calledNums.get(calledNums.size()-1), 100, 700);
         }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
+        if(won){
+            g.drawString("BINGO!",675,700);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand().equals(button.getActionCommand())){
+        if(e.getActionCommand().equals(button.getActionCommand())) {
+            if(!won){
             int temp;
-            do{
-                temp = (int)Math.round(Math.random()*74+1);
-            }while(calledNums.contains(temp));
+            do {
+                temp = (int) Math.round(Math.random() * 74 + 1);
+            } while (calledNums.contains(temp));
             calledNums.add(temp);
+        }
         }else {
             if(checkBingo(bingoNums)){
                 won = true;

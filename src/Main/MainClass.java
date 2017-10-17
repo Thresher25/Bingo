@@ -10,11 +10,12 @@ import java.util.ArrayList;
 
 public class MainClass extends JPanel implements ActionListener{
 
-    public final int SCREENWIDTH = 1024;
+    public final int SCREENWIDTH = 1536;
     public final int SCREENHEIGHT = 768;
     public final int REFRESHRATE = 16;
     public int[][] bingoNums = new int[5][5];
     public JButton button;
+    public JFormattedTextField playAgain;
     public ArrayList<Integer> calledNums = new ArrayList<Integer>();
     public Timer mTimer;
     public JFrame frame;
@@ -29,6 +30,12 @@ public class MainClass extends JPanel implements ActionListener{
         button = new JButton("Roll Number");
         button.setActionCommand("roll");
         button.addActionListener(this);
+        playAgain = new JFormattedTextField();
+        playAgain.setText( "Play Again? Y/N");
+        playAgain.setEditable(true);
+        playAgain.setVisible(false);
+
+        this.add(playAgain);
         this.setSize(SCREENWIDTH, SCREENHEIGHT);
         this.setVisible(true);
         this.setBackground(Color.DARK_GRAY);
@@ -133,6 +140,26 @@ public class MainClass extends JPanel implements ActionListener{
         }
         if(won){
             g.drawString("BINGO!",675,700);
+            String[] nums = new String[calledNums.size()/13+1];
+            for(int i=0;i<nums.length;i++){
+                nums[i] = "";
+            }
+            int count =0;
+            for(int i=0;i<calledNums.size();i++){
+                if(i!=0) {
+                    if (i % 13 == 0) {
+                        count++;
+                        nums[count] += "," + calledNums.get(i);
+                    } else {
+                        nums[count] += "," + calledNums.get(i);
+                    }
+                }else{
+                    nums[count]+=calledNums.get(i);
+                }
+            }
+            for(int i=0;i<nums.length;i++){
+                g.drawString(nums[i],700,100+i*100);
+            }
         }
     }
 
@@ -149,6 +176,14 @@ public class MainClass extends JPanel implements ActionListener{
         }else {
             if(checkBingo(bingoNums)){
                 won = true;
+                playAgain.setVisible(true);
+            }
+            if(won){
+                if(playAgain.getText().equalsIgnoreCase("y")){
+                    System.out.println("reset");
+                }else if(playAgain.getText().equalsIgnoreCase("n")){
+                    System.exit(0);
+                }
             }
             frame.repaint();
         }

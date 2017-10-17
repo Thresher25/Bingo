@@ -12,6 +12,7 @@ public class MainClass extends JPanel implements MouseListener, ActionListener{
     public final int SCREENWIDTH = 1024;
     public final int SCREENHEIGHT = 768;
     public final int REFRESHRATE = 16;
+    public int[][] bingoNums = new int[5][5];
     public Timer mTimer;
     public JFrame frame;
 
@@ -39,7 +40,25 @@ public class MainClass extends JPanel implements MouseListener, ActionListener{
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-
+        g.setFont(new Font("Times New Roman",Font.PLAIN,40));
+        g.setColor(Color.WHITE);
+        g.drawLine(150,150,150,650);
+        g.drawLine(250,150,250,650);
+        g.drawLine(350,150,350,650);
+        g.drawLine(450,150,450,650);
+        g.drawLine(550,150,550,650);
+        g.drawLine(650,150,650,650);
+        g.drawLine(150,150,650,150);
+        g.drawLine(150,250,650,250);
+        g.drawLine(150,350,650,350);
+        g.drawLine(150,450,650,450);
+        g.drawLine(150,550,650,550);
+        g.drawLine(150,650,650,650);
+        g.drawString("B",180,145);
+        g.drawString("I",280,145);
+        g.drawString("N",380,145);
+        g.drawString("G",480,145);
+        g.drawString("O",580,145);
     }
 
     @Override

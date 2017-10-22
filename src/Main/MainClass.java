@@ -4,8 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class MainClass extends JPanel implements ActionListener{
@@ -14,8 +12,7 @@ public class MainClass extends JPanel implements ActionListener{
     public final int SCREENHEIGHT = 768;
     public final int REFRESHRATE = 16;
     public int[][] bingoNums = new int[5][5];
-    public JButton button;
-    public JFormattedTextField playAgain;
+    public JButton button, yesButton, noButton;
     public ArrayList<Integer> calledNums = new ArrayList<Integer>();
     public Timer mTimer;
     public JFrame frame;
@@ -27,20 +24,28 @@ public class MainClass extends JPanel implements ActionListener{
 
 
     public MainClass(){
+        this.setLayout(null);
         button = new JButton("Roll Number");
         button.setActionCommand("roll");
         button.addActionListener(this);
-        playAgain = new JFormattedTextField();
-        playAgain.setText( "Play Again? Y/N");
-        playAgain.setEditable(true);
-        playAgain.setVisible(false);
-
-        this.add(playAgain);
+        button.setBounds(SCREENWIDTH/2-75,0,150,50);
+        yesButton = new JButton("Yes");
+        yesButton.setActionCommand("acceptReset");
+        yesButton.addActionListener(this);
+        yesButton.setVisible(false);
+        yesButton.setBounds(900,550,150,50);
+        noButton = new JButton("No");
+        noButton.setActionCommand("declineReset");
+        noButton.addActionListener(this);
+        noButton.setVisible(false);
+        noButton.setBounds(700,550,150,50);
         this.setSize(SCREENWIDTH, SCREENHEIGHT);
         this.setVisible(true);
         this.setBackground(Color.DARK_GRAY);
         this.setDoubleBuffered(true);
         this.add(button);
+        this.add(yesButton);
+        this.add(noButton);
         frame = new JFrame("Memory Game!");
         frame.setSize(SCREENWIDTH,SCREENHEIGHT);
         frame.setVisible(true);
@@ -54,7 +59,16 @@ public class MainClass extends JPanel implements ActionListener{
     }
 
     public void resetGame(){
-
+        yesButton.setVisible(false);
+        noButton.setVisible(false);
+        for(int i=0;i<bingoNums.length;i++){
+            for(int j=0;j<bingoNums.length;j++){
+                bingoNums[i][j] = -1;
+            }
+        }
+        populateArray(bingoNums);
+        won = false;
+        calledNums.clear();
     }
 
     public void populateArray(int[][] array){
@@ -139,6 +153,7 @@ public class MainClass extends JPanel implements ActionListener{
             g.drawString("Rolled Number: " + calledNums.get(calledNums.size()-1), 100, 700);
         }
         if(won){
+            g.drawString("Play Again?",775,500);
             g.drawString("BINGO!",675,700);
             String[] nums = new String[calledNums.size()/13+1];
             for(int i=0;i<nums.length;i++){
@@ -157,8 +172,9 @@ public class MainClass extends JPanel implements ActionListener{
                     nums[count]+=calledNums.get(i);
                 }
             }
+            g.drawString("Called Numbers: ",700,100);
             for(int i=0;i<nums.length;i++){
-                g.drawString(nums[i],700,100+i*100);
+                g.drawString(nums[i],700,160+i*60);
             }
         }
     }
@@ -173,17 +189,22 @@ public class MainClass extends JPanel implements ActionListener{
             } while (calledNums.contains(temp));
             calledNums.add(temp);
         }
+        }else if(e.getActionCommand().equals(yesButton.getActionCommand())) {
+            if(won){
+                resetGame();
+            }
+        }else if(e.getActionCommand().equals(noButton.getActionCommand())) {
+            if(won){
+                System.exit(0);
+            }
         }else {
             if(checkBingo(bingoNums)){
                 won = true;
-                playAgain.setVisible(true);
-            }
-            if(won){
-                if(playAgain.getText().equalsIgnoreCase("y")){
-                    System.out.println("reset");
-                }else if(playAgain.getText().equalsIgnoreCase("n")){
-                    System.exit(0);
-                }
+                yesButton.setVisible(true);
+                noButton.setVisible(true);
+                //I have too many chromosomes.
+                frame.setSize(frame.getWidth()+1,frame.getHeight());
+                frame.setSize(frame.getWidth()-1,frame.getHeight());
             }
             frame.repaint();
         }
